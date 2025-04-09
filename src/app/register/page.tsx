@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const router = useRouter();
+
+  // Form state for user registration fields
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -12,12 +14,15 @@ export default function RegisterPage() {
     last_name: '',
     phone_number: '',
   });
+
   const [error, setError] = useState('');
 
+  // Update form state on input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Submit registration data to backend API
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -29,10 +34,12 @@ export default function RegisterPage() {
 
     const data = await res.json();
 
+    // Handle success or show error message
     if (!res.ok) {
       setError(data.message || 'Something went wrong.');
     } else {
-      router.push('/login'); // redirect after successful registration
+      // Redirect to login after successful registration
+      router.push('/login');
     }
   };
 
@@ -44,8 +51,10 @@ export default function RegisterPage() {
       >
         <h1 className="text-2xl font-semibold text-gray-800">Register</h1>
 
+        {/* Error message display */}
         {error && <p className="text-sm text-red-600">{error}</p>}
 
+        {/* Dynamically render form fields */}
         {['first_name', 'last_name', 'email', 'phone_number', 'password'].map((field) => (
           <div key={field}>
             <label className="block text-sm font-medium text-gray-700 capitalize">
@@ -62,6 +71,7 @@ export default function RegisterPage() {
           </div>
         ))}
 
+        {/* Submit button */}
         <button
           type="submit"
           className="w-full rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"

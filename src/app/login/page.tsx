@@ -6,23 +6,29 @@ import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const router = useRouter();
+
+  // Form state variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  // Handle form submission and attempt login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Use NextAuth credentials provider to sign in
     const res = await signIn('credentials', {
       redirect: false,
       email,
       password,
     });
 
+    // Display error if login failed
     if (res?.error) {
       setError('Invalid email or password');
     } else {
-      router.push('/dashboard'); // Replace with your protected route
+      // Redirect to protected route on successful login
+      router.push('/dashboard');
     }
   };
 
@@ -34,12 +40,14 @@ export default function LoginPage() {
       >
         <h1 className="text-2xl font-semibold text-gray-800">Login</h1>
 
+        {/* Error message display */}
         {error && (
           <div className="rounded bg-red-100 px-4 py-2 text-sm text-red-700">
             {error}
           </div>
         )}
 
+        {/* Email field */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Email
@@ -53,6 +61,7 @@ export default function LoginPage() {
           />
         </div>
 
+        {/* Password field */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Password
@@ -66,6 +75,7 @@ export default function LoginPage() {
           />
         </div>
 
+        {/* Submit button */}
         <button
           type="submit"
           className="w-full rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
