@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Button from '@/src/components/ui/Button';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -85,12 +86,7 @@ export default function RegisterPage() {
           )}
 
           {/* Submit button */}
-          <button
-            type="submit"
-            className="w-full rounded bg-[#00347B] px-4 py-2 text-white hover:bg-[#FED602] hover:text-[#00347B]"
-          >
-            Create Account
-          </button>
+          <Button type="submit">Create Account</Button>
         </form>
       </div>
     </div>
