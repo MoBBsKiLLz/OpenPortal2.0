@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-color: #ffffff;
+  --text-color: #00347B;
+  --content-text-color: #1f2937;
+  --topbar-bg: #ffffff;
+  --sidebar-bg: #00347B;
+  --sidebar-hover-bg: #002960;
+  --logo: url('/images/opentechlogo.png');
+  --hover-bg: #e5e7eb;
+  --menu-hover-bg: #e5e7eb;
+  --menu-bg: #f3f4f6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --bg-color: #0a0a0a;
+  --text-color: #ffffff;
+  --content-text-color: #ffffff;
+  --topbar-bg: #1f2937;
+  --sidebar-bg: #374151;
+  --sidebar-hover-bg: #4b5563;
+  --logo: url('/images/opentechlogo2.png');
+  --hover-bg: #374151;
+  --menu-hover-bg: #4b5563;
+  --menu-bg: #374151;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }

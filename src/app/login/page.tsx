@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Button from '@/src/components/ui/Button';
+import Button from '@/src/app/components/ui/Button';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function LoginPage() {
       setError("Invalid email or password");
     } else {
       // Redirect to protected route on successful login
-      router.push("/dashboard");
+      router.push("/invites");
     }
   };
 

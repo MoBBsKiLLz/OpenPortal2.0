@@ -1,21 +1,33 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { hash } from 'bcryptjs';
+import { isAfter } from 'date-fns';
 
 // Handle POST requests to register a new user
 export async function POST(req: Request) {
   try {
     // Parse the incoming request body as JSON
     const body = await req.json();
-    const { email, password, first_name, last_name, phone_number } = body;
+    const { token, password, first_name, last_name, phone_number } = body;
 
     // Validate that all required fields are provided
-    if (!email || !password || !first_name || !last_name || !phone_number) {
+    if (!token || !password || !first_name || !last_name || !phone_number) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    // Check if a user with the same email already exists
-    const existingUser = await prisma.users.findUnique({ where: { email } });
+    // Validate invite token
+    const invite = await prisma.invite_tokens.findUnique({ where: { token } });
+
+    if (!invite) {
+      return NextResponse.json({ message: 'Invalid or expired invite token' }, { status: 400 });
+    }
+
+    if (invite.used || isAfter(new Date(), invite.expires_at)) {
+      return NextResponse.json({ message: 'Invite token has expired or already been used' }, { status: 400 });
+    }
+
+    // Check if user already exists (shouldn't normally happen)
+    const existingUser = await prisma.users.findUnique({ where: { email: invite.email } });
     if (existingUser) {
       return NextResponse.json({ message: 'User already exists' }, { status: 409 });
     }
@@ -24,9 +36,9 @@ export async function POST(req: Request) {
     const hashedPassword = await hash(password, 10);
 
     // Create a new user record in the database
-    await prisma.users.create({
+    const newUser = await prisma.users.create({
       data: {
-        email,
+        email: invite.email,
         password: hashedPassword,
         first_name,
         last_name,
@@ -34,6 +46,27 @@ export async function POST(req: Request) {
         // Generate a default username by combining first and last name
         username: `${first_name.toLowerCase()}.${last_name.toLowerCase()}`,
       },
+    });
+
+    // Find role by name
+    const role = await prisma.roles.findUnique({ where: { role_name: invite.role } });
+
+    if (!role) {
+      return NextResponse.json({ message: 'Assigned role does not exist' }, { status: 400 });
+    }
+
+    // Assign user role
+    await prisma.user_role.create({
+      data: {
+        user_id: newUser.user_id,
+        role_id: role.role_id,
+      },
+    });
+
+    // Mark invite as used
+    await prisma.invite_tokens.update({
+      where: { token },
+      data: { used: true },
     });
 
     // Respond with a success message

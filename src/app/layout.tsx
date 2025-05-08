@@ -1,10 +1,11 @@
 // app/layout.tsx
-import './globals.css';
-import type { Metadata } from 'next';
+import "./globals.css";
+import type { Metadata } from "next";
+import { ThemeProvider } from '@/src/context/ThemeContext';
 
 export const metadata: Metadata = {
-  title: 'OpenPortal 2.0',
-  description: 'Secure portal login and registration app',
+  title: "OpenPortal 2.0",
+  description: "Secure portal login and registration app",
 };
 
 export default function RootLayout({
@@ -13,8 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <ThemeProvider>
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    </ThemeProvider>
   );
 }

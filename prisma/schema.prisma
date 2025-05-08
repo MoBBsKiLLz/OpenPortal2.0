@@ -18,6 +18,7 @@ model users {
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   user_roles   user_role[]   @relation("UserToRoles") 
+  invites_sent invite_tokens[] @relation("CreatedInvites")
 }
 
 model roles {
@@ -34,4 +35,22 @@ model user_role {
 
   users users @relation(fields: [user_id], references: [user_id], name: "UserToRoles")
   roles roles @relation(fields: [role_id], references: [role_id], name: "RoleToUsers")
+
+  @@unique([user_id, role_id])
+}
+
+model invite_tokens {
+  id            Int      @id @default(autoincrement())
+  token         String   @unique
+  email         String
+  role          String
+  account_id    Int?     // Nullable if not applicable
+  region_id     Int?     // Nullable if not applicable
+  facility_id   Int?     // Nullable if not applicable
+  created_by    Int
+  expires_at    DateTime
+  used          Boolean  @default(false)
+  created_at    DateTime @default(now())
+
+  user_created_by users @relation("CreatedInvites", fields: [created_by], references: [user_id])
 }
