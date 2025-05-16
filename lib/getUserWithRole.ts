@@ -22,6 +22,7 @@ export async function getUserWithRole() {
   const role = user.user_roles[0]?.roles?.role_name || "N/A"; // Adjust for multiple roles if needed
 
   return {
+    id: user.user_id,
     email: user.email,
     role,
   };

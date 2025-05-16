@@ -19,6 +19,8 @@ model users {
   updated_at   DateTime      @updatedAt
   user_roles   user_role[]   @relation("UserToRoles") 
   invites_sent invite_tokens[] @relation("CreatedInvites")
+  user_accounts   user_account[]    @relation("UserToAccount")
+  user_facilities user_facility[]   @relation("UserToFacility")
 }
 
 model roles {
@@ -53,4 +55,65 @@ model invite_tokens {
   created_at    DateTime @default(now())
 
   user_created_by users @relation("CreatedInvites", fields: [created_by], references: [user_id])
+}
+
+model accounts {
+  account_id   Int         @id @default(autoincrement())
+  name         String      @db.VarChar(100)
+  phone_number String      @db.VarChar(15)
+  address      String      @db.VarChar(255)
+  city         String      @db.VarChar(100)
+  state        String      @db.VarChar(50)
+  postal_code  String      @db.VarChar(20)
+  region_id    Int
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+
+  region       regions     @relation(fields: [region_id], references: [region_id])
+  facilities   facilities[]
+  user_accounts user_account[]
+}
+
+model facilities {
+  facility_id  Int         @id @default(autoincrement())
+  name         String      @db.VarChar(100)
+  phone_number String      @db.VarChar(15)
+  address      String      @db.VarChar(255)
+  city         String      @db.VarChar(100)
+  state        String      @db.VarChar(50)
+  postal_code  String      @db.VarChar(20)
+  account_id   Int
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+
+  account      accounts    @relation(fields: [account_id], references: [account_id])
+  user_facilities user_facility[]
+}
+
+model regions {
+  region_id   Int         @id @default(autoincrement())
+  name        String      @unique @db.VarChar(100)
+  accounts    accounts[]
+}
+
+model user_account {
+  user_account_id Int    @id @default(autoincrement())
+  user_id         Int
+  account_id      Int
+
+  users           users     @relation("UserToAccount", fields: [user_id], references: [user_id])
+  accounts        accounts  @relation(fields: [account_id], references: [account_id])
+
+  @@unique([user_id, account_id])
+}
+
+model user_facility {
+  user_facility_id Int    @id @default(autoincrement())
+  user_id          Int
+  facility_id      Int
+
+  users            users       @relation("UserToFacility", fields: [user_id], references: [user_id])
+  facilities       facilities @relation(fields: [facility_id], references: [facility_id])
+
+  @@unique([user_id, facility_id])
 }

@@ -6,7 +6,7 @@ import { addHours } from 'date-fns';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, role, account_id, region_id, facility_id, created_by } = body;
+    const { email, role, account_ids, facility_ids, created_by } = body;
 
     // Basic validation
     if (!email || !role || !created_by) {
@@ -46,9 +46,8 @@ export async function POST(req: Request) {
         token,
         email,
         role,
-        account_id,
-        region_id,
-        facility_id,
+        account_id: account_ids?.[0] ?? null,
+        facility_id: facility_ids?.[0] ?? null,
         created_by,
         expires_at: expiresAt,
       },

@@ -57,4 +57,6 @@ export const authOptions: NextAuthOptions = {
 
   // Secret key for JWT and session encryption
   secret: process.env.NEXTAUTH_SECRET,
+
+  
 };

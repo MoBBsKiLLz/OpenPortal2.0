@@ -1,0 +1,5 @@
+insert into accounts (account_id, name, phone_number, address, city, state, postal_code, region_id, updated_at) values (1, 'Hudson Inc', '323-946-9139', '7095 Rowland Circle', 'Los Angeles', 'California', '90045', 1, NOW());
+insert into accounts (account_id, name, phone_number, address, city, state, postal_code, region_id, updated_at) values (2, 'Rohan, Mosciski and Kirlin', '704-660-7563', '3538 Sutherland Crossing', 'Charlotte', 'North Carolina', '28284', 2, NOW());
+insert into accounts (account_id, name, phone_number, address, city, state, postal_code, region_id, updated_at) values (3, 'Ullrich-Mante', '210-686-4736', '58998 Vermont Court', 'San Antonio', 'Texas', '78215', 3, NOW());
+insert into accounts (account_id, name, phone_number, address, city, state, postal_code, region_id, updated_at) values (4, 'Kerluke LLC', '256-163-0913', '6 American Point', 'Huntsville', 'Alabama', '35805', 4, NOW());
+insert into accounts (account_id, name, phone_number, address, city, state, postal_code, region_id, updated_at) values (5, 'Murazik LLC', '719-735-0177', '72520 Katie Way', 'Pueblo', 'Colorado', '81005', 5, NOW());

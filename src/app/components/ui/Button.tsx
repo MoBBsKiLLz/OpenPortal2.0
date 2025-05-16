@@ -26,7 +26,7 @@ export default function Button({
 
   const variantStyles = {
     primary: 'bg-[#00347B] text-white hover:bg-[#FED602] hover:text-[#00347B]',
-    secondary: 'bg-gray-200 text-[#00347B] hover:bg-gray-300',
+    secondary: 'bg-gray-300 text-[#00347B] hover:bg-gray-600 hover:text-white',
     outline: 'border border-[#00347B] text-[#00347B] bg-transparent hover:bg-[#00347B] hover:text-white',
   };
 
@@ -43,7 +43,7 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'rounded bg-[#00347B] px-4 py-2 text-white transition-colors duration-200',
+        'rounded bg-[#00347B] px-4 py-2 transition-colors duration-200',
         'hover:bg-[#FED602] hover:text-[#00347B]',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantStyles[variant],
