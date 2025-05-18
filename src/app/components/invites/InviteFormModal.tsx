@@ -6,16 +6,19 @@ import Button from "@/src/app/components/ui/Button";
 import { Role, Account, Facility } from "@/src/types";
 import { singleSelectStyles, multiSelectStyles } from "@/lib/reactSelectStyles";
 
+// Type used for options in react-select
 interface OptionType {
   label: string;
   value: number | string;
 }
 
+// Props for the modal component
 interface InviteFormModalProps {
   onClose: () => void;
   onSuccess?: () => void;
 }
 
+// Custom checkbox option for multi-select dropdowns
 const CheckboxOption = <T extends OptionType>(
   props: OptionProps<T, true, GroupBase<T>>
 ) => (
@@ -23,7 +26,7 @@ const CheckboxOption = <T extends OptionType>(
     <input
       type="checkbox"
       checked={props.isSelected}
-      onChange={() => {}}
+      onChange={() => {}} // Prevent checkbox click from overriding selection behavior
       className="mr-2"
     />
     <label>{props.label}</label>
@@ -31,34 +34,34 @@ const CheckboxOption = <T extends OptionType>(
 );
 
 export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalProps) {
+  // State definitions
   const [roles, setRoles] = useState<Role[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [facilities, setFacilities] = useState<Facility[]>([]);
-
   const [selectedAccounts, setSelectedAccounts] = useState<OptionType[]>([]);
-  const [selectedFacilities, setSelectedFacilities] = useState<OptionType[]>(
-    []
-  );
+  const [selectedFacilities, setSelectedFacilities] = useState<OptionType[]>([]);
   const [role, setRole] = useState<OptionType | null>(null);
   const [formData, setFormData] = useState({ email: "" });
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
-  // Fetch roles on load
+  // Fetch available roles when component mounts
   useEffect(() => {
     fetch("/api/roles")
       .then((res) => res.json())
       .then(setRoles);
   }, []);
 
-  // Fetch accounts when a relevant role is selected
+  // Fetch accounts if role requires them and not already loaded
   useEffect(() => {
     if (!role) return;
+
     const name = roles.find((r) => r.role_id === role.value)?.role_name;
     const needsAccounts = [
       "Account Manager",
       "Regional Manager",
       "Facility Manager",
     ].includes(name || "");
+
     if (needsAccounts && accounts.length === 0) {
       fetch("/api/accounts")
         .then((res) => res.json())
@@ -66,7 +69,7 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
     }
   }, [role, roles, accounts.length]);
 
-  // Fetch facilities when accounts are selected
+  // Fetch facilities based on selected accounts
   useEffect(() => {
     if (selectedAccounts.length === 0) return;
 
@@ -91,12 +94,16 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
       });
   }, [selectedAccounts]);
 
+  // Memoized helper to get current role name
   const roleName = useMemo(
     () => roles.find((r) => r.role_id === role?.value)?.role_name || "",
     [role, roles]
   );
 
+  // Boolean for facility manager role check
   const isFacilityManager = roleName === "Facility Manager";
+
+  // Facility dropdown options, filtered by selected accounts
   const facilityOptions: OptionType[] = useMemo(() => {
     const filtered = facilities.filter((f) =>
       selectedAccounts.some((a) => a.value === f.account_id)
@@ -110,19 +117,22 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
     ];
   }, [facilities, selectedAccounts]);
 
+  // If "Select All Facilities" is selected, select all actual facilities
   useEffect(() => {
     if (selectedFacilities.some((opt) => opt.value === -1)) {
       setSelectedFacilities(facilityOptions.filter((opt) => opt.value !== -1));
     }
   }, [selectedFacilities, facilityOptions]);
 
+  // Get current user ID on component mount
   useEffect(() => {
-  fetch("/api/user")
-    .then(res => res.json())
-    .then(data => setCurrentUserId(data.id))
-    .catch(err => console.error("Failed to fetch current user", err));
-}, []);
+    fetch("/api/user")
+      .then(res => res.json())
+      .then(data => setCurrentUserId(data.id))
+      .catch(err => console.error("Failed to fetch current user", err));
+  }, []);
 
+  // Handle invite submission
   const handleSubmit = async () => {
     const res = await fetch("/api/invite", {
       method: "POST",
@@ -145,10 +155,11 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-[var(--topbar-bg)] text-black dark:text-[var(--text-color)] rounded-lg p-6 w-full max-w-2xl shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Create Invite</h2>
 
+        {/* Email Input */}
         <div className="mb-4">
           <label className="block mb-1">Email</label>
           <input
@@ -162,6 +173,7 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
           />
         </div>
 
+        {/* Role Selector */}
         <div className="mb-4">
           <label className="block mb-1">Role</label>
           <Select<OptionType, false>
@@ -180,13 +192,14 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
           />
         </div>
 
-        {/* Accounts */}
+        {/* Accounts Selector */}
         {["Account Manager", "Regional Manager", "Facility Manager"].includes(
           roleName
         ) && (
           <div className="mb-4">
             <label className="block mb-1">Accounts</label>
             {isFacilityManager ? (
+              // Single account select for Facility Manager
               <Select<OptionType, false>
                 value={selectedAccounts[0] || null}
                 onChange={(opt) => setSelectedAccounts(opt ? [opt] : [])}
@@ -198,6 +211,7 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
                 className="text-sm"
               />
             ) : (
+              // Multi-select for other roles
               <Select<OptionType, true>
                 value={selectedAccounts}
                 onChange={(opts) => setSelectedAccounts([...(opts || [])])}
@@ -216,7 +230,7 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
           </div>
         )}
 
-        {/* Facilities */}
+        {/* Facilities Selector */}
         {["Regional Manager", "Facility Manager"].includes(roleName) &&
           selectedAccounts.length > 0 && (
             <div className="mb-4">
@@ -235,6 +249,7 @@ export default function InviteFormModal({ onClose, onSuccess }: InviteFormModalP
             </div>
           )}
 
+        {/* Action Buttons */}
         <div className="flex justify-end mt-6 space-x-2">
           <Button variant="secondary" onClick={onClose}>
             Cancel
