@@ -39,7 +39,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-[#00347B]/70"></div>
 
       {/* Form container (above background) */}
-      <div className="relative z-10 flex h-full items-center justify-center px-4">
+      <div className="relative z-10 flex h-full items-center justify-center md:justify-start md:ml-56 px-4">
         <form
           onSubmit={handleLogin}
           className="w-full max-w-md space-y-6 rounded-lg bg-white bg-opacity-90 p-8 shadow-md backdrop-blur"
