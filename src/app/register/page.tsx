@@ -84,7 +84,7 @@ export default function RegisterPage() {
   return (
     <div className="relative h-screen w-full bg-[url('/images/heroimage.png')] bg-cover bg-center">
       <div className="absolute inset-0 bg-[#00347B]/70" />
-      <div className="relative z-10 flex h-full items-center justify-center md:justify-start md:ml-56 px-4">
+      <div className="relative z-10 flex h-full items-center justify-center md:justify-start md:ml-[15%] px-4">
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-md space-y-6 rounded-lg bg-white bg-opacity-90 p-8 shadow-md backdrop-blur"
