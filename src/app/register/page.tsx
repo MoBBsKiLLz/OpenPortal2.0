@@ -1,10 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '@/src/app/components/ui/Button';
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20">Loading...</div>}>
+      <ActualForm />
+    </Suspense>
+  );
+}
+
+function ActualForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -21,7 +29,6 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Fetch token from query params
   const token = searchParams.get('token');
 
   useEffect(() => {
